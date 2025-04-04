@@ -1,30 +1,20 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { supabase } from '@/lib/supabase';
+import { useAuth } from '@/hooks/useAuth';
 
 export default function LoginPage() {
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const router = useRouter();
+  const { signIn } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email: username,
-        password: password,
-      });
-
-      if (error) throw error;
-
-      if (data.user) {
-        router.push('/dashboard');
-      }
+      await signIn(email, password);
     } catch (error: any) {
       setError(error.message || 'Erro ao fazer login');
     }
@@ -47,18 +37,18 @@ export default function LoginPage() {
             <form className="space-y-6" onSubmit={handleSubmit}>
               <div className="space-y-4">
                 <div>
-                  <label htmlFor="username" className="block text-sm font-medium text-text-primary mb-1">
+                  <label htmlFor="email" className="block text-sm font-medium text-text-primary mb-1">
                     Email
                   </label>
                   <input
-                    id="username"
-                    name="username"
+                    id="email"
+                    name="email"
                     type="email"
                     required
                     className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-system-primary focus:border-system-primary sm:text-sm text-text-primary"
                     placeholder="Digite seu email"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                   />
                 </div>
                 <div>

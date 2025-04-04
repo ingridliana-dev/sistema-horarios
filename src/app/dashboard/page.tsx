@@ -1,74 +1,52 @@
 'use client';
 
+import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '@/hooks/useAuth';
 
-export default function Dashboard() {
+export default function DashboardPage() {
+  const { user, loading, signOut } = useAuth();
   const router = useRouter();
 
+  useEffect(() => {
+    if (!loading && !user) {
+      router.push('/');
+    }
+  }, [user, loading, router]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-2xl">Carregando...</div>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-background-light">
-      <nav className="bg-system-primary text-white shadow-lg">
+    <div className="min-h-screen bg-gray-100">
+      <nav className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
+          <div className="flex justify-between h-16">
             <div className="flex items-center">
-              <span className="font-bold text-xl text-white">Sistema de Horários</span>
+              <h1 className="text-xl font-semibold">Sistema de Horários</h1>
             </div>
-            <button
-              onClick={() => router.push('/')}
-              className="px-4 py-2 rounded-md bg-system-secondary hover:bg-system-hover text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-system-primary transition-colors duration-200"
-            >
-              Sair
-            </button>
+            <div className="flex items-center">
+              <button
+                onClick={() => signOut()}
+                className="ml-4 px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+              >
+                Sair
+              </button>
+            </div>
           </div>
         </div>
       </nav>
 
       <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <div className="px-4 py-6 sm:px-0">
-          <h1 className="text-2xl font-semibold text-text-primary mb-6">Dashboard</h1>
-          
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {/* Card de Professores */}
-            <div className="bg-background-white overflow-hidden shadow-sm rounded-lg border border-gray-200">
-              <div className="p-6">
-                <h3 className="text-lg font-medium text-text-primary">Professores</h3>
-                <p className="mt-2 text-sm text-text-secondary">
-                  Gerenciar professores e suas disponibilidades
-                </p>
-                <button 
-                  onClick={() => router.push('/dashboard/professores')}
-                  className="mt-4 px-4 py-2 bg-system-primary text-white rounded-md hover:bg-system-hover transition-colors duration-200"
-                >
-                  Acessar
-                </button>
-              </div>
-            </div>
-
-            {/* Card de Horários */}
-            <div className="bg-background-white overflow-hidden shadow-sm rounded-lg border border-gray-200">
-              <div className="p-6">
-                <h3 className="text-lg font-medium text-text-primary">Horários</h3>
-                <p className="mt-2 text-sm text-text-secondary">
-                  Visualizar e gerenciar grade de horários
-                </p>
-                <button className="mt-4 px-4 py-2 bg-system-primary text-white rounded-md hover:bg-system-hover transition-colors duration-200">
-                  Acessar
-                </button>
-              </div>
-            </div>
-
-            {/* Card de Relatórios */}
-            <div className="bg-background-white overflow-hidden shadow-sm rounded-lg border border-gray-200">
-              <div className="p-6">
-                <h3 className="text-lg font-medium text-text-primary">Relatórios</h3>
-                <p className="mt-2 text-sm text-text-secondary">
-                  Gerar relatórios e análises
-                </p>
-                <button className="mt-4 px-4 py-2 bg-system-primary text-white rounded-md hover:bg-system-hover transition-colors duration-200">
-                  Acessar
-                </button>
-              </div>
-            </div>
+          <div className="border-4 border-dashed border-gray-200 rounded-lg h-96 p-4">
+            <h2 className="text-2xl font-bold mb-4">Bem-vindo ao Dashboard</h2>
+            <p>Email do usuário: {user?.email}</p>
           </div>
         </div>
       </main>
