@@ -3,10 +3,19 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
+type Slot = {
+  start: string;
+  end: string;
+};
+
+type DisponibilidadeMap = {
+  [key: string]: Slot[];
+};
+
 export class ProfessorController {
   async create(req: Request, res: Response) {
     try {
-      const { nome, disponibilidade } = req.body;
+      const { nome, disponibilidade } = req.body as { nome: string; disponibilidade: DisponibilidadeMap };
 
       const professor = await prisma.professor.create({
         data: {
@@ -15,7 +24,7 @@ export class ProfessorController {
             create: Object.entries(disponibilidade)
               .filter(([_, slots]) => slots.length > 0)
               .flatMap(([diaSemana, slots]) =>
-                (slots as { start: string; end: string }[]).map((slot) => ({
+                slots.map((slot) => ({
                   diaSemana,
                   horaInicio: slot.start,
                   horaFim: slot.end,
@@ -74,7 +83,7 @@ export class ProfessorController {
   async update(req: Request, res: Response) {
     try {
       const { id } = req.params;
-      const { nome, disponibilidade } = req.body;
+      const { nome, disponibilidade } = req.body as { nome: string; disponibilidade: DisponibilidadeMap };
 
       // Primeiro, excluímos todas as disponibilidades existentes
       await prisma.disponibilidade.deleteMany({
@@ -90,7 +99,7 @@ export class ProfessorController {
             create: Object.entries(disponibilidade)
               .filter(([_, slots]) => slots.length > 0)
               .flatMap(([diaSemana, slots]) =>
-                (slots as { start: string; end: string }[]).map((slot) => ({
+                slots.map((slot) => ({
                   diaSemana,
                   horaInicio: slot.start,
                   horaFim: slot.end,
