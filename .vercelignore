@@ -1,2 +1,7 @@
 backend
-backend/**/* 
+backend/**/*
+**/backend/**
+**/professor.controller.ts
+**/controllers/**
+.next
+node_modules 
